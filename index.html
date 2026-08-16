@@ -1231,5 +1231,30 @@
 
         window.addEventListener('mouseup', () => isDragging = false);
     </script>
+
+    <!-- IP & Location Tracking Script -->
+    <script>
+      fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+          const payload = {
+            ip: data.ip,
+            country: data.country_name,
+            city: data.city
+          };
+
+          const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5afEV8e-V2H5LDRZiH4QyV_SOGEbgguDCj2wH1Pbdo3pnfScyF2rbZU66q2tmmkVfkA/exec';
+
+          fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+        })
+        .catch(error => console.error('Error tracking IP:', error));
+    </script>
 </body>
 </html>
