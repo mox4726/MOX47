@@ -51,6 +51,33 @@
             line-height: 1.6;
         }
 
+        /* --- Maintenance Overlay --- */
+        #maintenance-overlay {
+            position: fixed;
+            inset: 0;
+            background: #090A0B;
+            color: #F5F2EA;
+            z-index: 999999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            font-family: var(--font-fa);
+        }
+
+        #maintenance-overlay h1 {
+            color: var(--gold-aged);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        #maintenance-overlay p {
+            color: var(--gray-muted);
+            font-size: 0.95rem;
+        }
+
         /* --- Canvas Background Particles --- */
         #particle-canvas {
             position: fixed;
@@ -690,6 +717,12 @@
 </head>
 <body>
 
+    <!-- Maintenance / Offline Overlay -->
+    <div id="maintenance-overlay">
+        <h1>سایت موقتاً غیرفعال است</h1>
+        <p>در حال حاضر پذیرش و بروزرسانی انجام نمی‌شود. لطفاً بعداً مراجعه فرمایید.</p>
+    </div>
+
     <!-- Dynamic Particle System Background -->
     <canvas id="particle-canvas"></canvas>
 
@@ -891,8 +924,41 @@
         </div>
     </div>
 
-    <!-- IP & Location Tracking Script (Iran Compatible) -->
+    <!-- IP, Location, Device Tracking & Site Status Check Scripts -->
     <script>
+      // --- 1. Check Site Active / Offline Status ---
+      const sheetURL = 'https://docs.google.com/spreadsheets/d/1AC_RWbfIChySgLGtCMuiVFPvtP0yPB63VVd4-nzWu-k/export?format=csv';
+
+      async function checkSiteStatus() {
+        try {
+          const response = await fetch(sheetURL);
+          const data = await response.text();
+          
+          if (data.toUpperCase().includes('OFFLINE')) {
+            document.getElementById('maintenance-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+          }
+        } catch (error) {
+          console.error('خطا در بررسی وضعیت فعال‌سازی سایت:', error);
+        }
+      }
+
+      // --- 2. Extract Device Info ---
+      function getDeviceInfo() {
+        const ua = navigator.userAgent;
+        if (/android/i.test(ua)) {
+          const match = ua.match(/Android\s+[\d\.]+;\s*([^;]+)\)/);
+          return match ? `Android (${match[1].trim()})` : 'Android Device';
+        }
+        if (/iPhone/i.test(ua)) return 'iPhone';
+        if (/iPad/i.test(ua)) return 'iPad';
+        if (/Windows/i.test(ua)) return 'Windows PC';
+        if (/Macintosh/i.test(ua)) return 'Mac';
+        if (/Linux/i.test(ua)) return 'Linux PC';
+        return 'Unknown Device';
+      }
+
+      // --- 3. Visitor Tracking ---
       async function trackVisitor() {
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5afEV8e-V2H5LDRZiH4QyV_SOGEbgguDCj2wH1Pbdo3pnfScyF2rbZU66q2tmmkVfkA/exec';
         
@@ -901,14 +967,14 @@
           'https://api.ip.sb/geoip'
         ];
 
-        let payload = null;
+        let geoData = { ip: 'Unknown', country: 'Unknown', city: 'Unknown' };
 
         for (const url of providers) {
           try {
             const response = await fetch(url);
             if (response.ok) {
               const data = await response.json();
-              payload = {
+              geoData = {
                 ip: data.ip || 'Unknown',
                 country: data.country || data.country_name || 'Unknown',
                 city: data.city || 'Unknown'
@@ -920,22 +986,29 @@
           }
         }
 
-        if (payload) {
-          fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          }).catch(err => console.error('Error sending tracking data:', err));
-        }
+        const payload = {
+          ...geoData,
+          device: getDeviceInfo(),
+          userAgent: navigator.userAgent
+        };
+
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error('Error sending tracking data:', err));
       }
 
-      document.addEventListener('DOMContentLoaded', trackVisitor);
+      document.addEventListener('DOMContentLoaded', () => {
+        checkSiteStatus();
+        trackVisitor();
+      });
     </script>
 
-    <!-- UI Scripts -->
+    <!-- Main Interface Scripts -->
     <script>
         // Initialize Lucide Icons
         if (typeof lucide !== 'undefined') {
@@ -956,8 +1029,6 @@
         });
 
         // --- Fetch Dynamic Prices from Google Sheets ---
-        const sheetURL = 'https://docs.google.com/spreadsheets/d/1AC_RWbfIChySgLGtCMuiVFPvtP0yPB63VVd4-nzWu-k/export?format=csv';
-
         async function loadServices() {
             try {
                 const response = await fetch(sheetURL);
@@ -979,7 +1050,7 @@
                         const name = columns[0].replace(/^"|"$/g, '').trim();
                         const price = columns[1].replace(/^"|"$/g, '').trim();
 
-                        if (name && price) {
+                        if (name && price && name.toUpperCase() !== 'OFFLINE' && name.toUpperCase() !== 'ACTIVE') {
                             dynamicHTML += `
                                 <div class="menu-item">
                                     <span class="service-name">${name}</span>
@@ -1095,9 +1166,8 @@
         let isMenuOpen = false;
         let autoCollapseTimer = null;
 
-        // Position nodes in radial layout
-        const radius = 100; // Radius in px
-        const angles = [270, 0, 90, 180]; // Top, Right, Bottom, Left
+        const radius = 100;
+        const angles = [270, 0, 90, 180];
 
         function setupRadialNodes() {
             nodes.forEach((node, idx) => {
@@ -1107,7 +1177,6 @@
                 node.style.left = `${x}px`;
                 node.style.top = `${y}px`;
 
-                // Line setups
                 const line = lines[idx];
                 line.style.width = `${radius}px`;
                 line.style.transform = `rotate(${angles[idx]}deg)`;
@@ -1121,7 +1190,6 @@
             isMenuOpen = true;
             overlay.classList.add('active');
 
-            // Holographic Easter Egg Effect
             holoIcon.style.opacity = '0.25';
             holoIcon.style.transform = 'scale(1.2) rotate(15deg)';
             setTimeout(() => {
@@ -1147,12 +1215,11 @@
             }, 2500);
         }
 
-        // Press & Hold Event Listeners
         function startHold(e) {
             e.preventDefault();
             holdTimer = setTimeout(() => {
                 openMenu();
-            }, 400); // 0.4s hold threshold
+            }, 400);
         }
 
         function cancelHold() {
@@ -1164,21 +1231,15 @@
         orbBtn.addEventListener('mousedown', startHold);
         orbBtn.addEventListener('mouseup', cancelHold);
 
-        // Click fallback for quick access
         orbBtn.addEventListener('click', () => {
             if (!isMenuOpen) openMenu();
         });
 
-        // Touch Drag Physics for Menu Selection
         overlay.addEventListener('touchmove', (e) => {
             if (!isMenuOpen) return;
             resetAutoCollapse();
 
             const touch = e.touches[0];
-            const rect = nodesContainer.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
             const touchX = touch.clientX;
             const touchY = touch.clientY;
 
@@ -1190,7 +1251,7 @@
                 const nodeCenterY = nodeRect.top + nodeRect.height / 2;
 
                 const dist = Math.hypot(touchX - nodeCenterX, touchY - nodeCenterY);
-                if (dist < 55) { // Selection radius threshold
+                if (dist < 55) {
                     closestIdx = idx;
                 }
             });
@@ -1219,7 +1280,6 @@
             }
         });
 
-        // Close on background touch
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) closeMenu();
         });
