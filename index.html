@@ -736,45 +736,9 @@
 
             <div class="glass-card">
                 <div class="menu-list">
+                    <!-- Dynamic Items from Google Sheets will load here -->
                     <div class="menu-item">
-                        <span class="service-name">پاکسازی کامل پوست</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۸۰۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">کلاسیک / انگلیسی</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۴۰۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">بازکات / BUZZ CUT</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۳۷۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">اصلاح سر و ریش</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۳۵۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">تیپر فید / اسپایکی</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۳۵۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">سایه ریش</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۲۰۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">آنکارد سر و ریش</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۱۵۰٬۰۰۰ تومان</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="service-name">شستشو + مدل</span>
-                        <span class="service-dots"></span>
-                        <span class="service-price">۱۷۰٬۰۰۰ تومان</span>
+                        <span class="service-name">در حال بروزرسانی لیست قیمت‌ها...</span>
                     </div>
                 </div>
             </div>
@@ -946,6 +910,52 @@
                 setTimeout(() => loader.style.display = 'none', 800);
             }, 2200);
         });
+
+        // --- Fetch Dynamic Prices from Google Sheets ---
+        const sheetURL = 'https://docs.google.com/spreadsheets/d/1AC_RWbfIChySgLGtCMuiVFPvtP0yPB63VVd4-nzWu-k/export?format=csv';
+
+        async function loadServices() {
+            try {
+                const response = await fetch(sheetURL);
+                const data = await response.text();
+                
+                const rows = data.split('\n').slice(1); 
+                const menuList = document.querySelector('.menu-list');
+                
+                if (!menuList) return;
+                
+                let dynamicHTML = '';
+
+                rows.forEach(row => {
+                    if (!row.trim()) return;
+
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    
+                    if (columns.length >= 2) {
+                        const name = columns[0].replace(/^"|"$/g, '').trim();
+                        const price = columns[1].replace(/^"|"$/g, '').trim();
+
+                        if (name && price) {
+                            dynamicHTML += `
+                                <div class="menu-item">
+                                    <span class="service-name">${name}</span>
+                                    <span class="service-dots"></span>
+                                    <span class="service-price">${price}</span>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+
+                if (dynamicHTML) {
+                    menuList.innerHTML = dynamicHTML;
+                }
+            } catch (error) {
+                console.error('خطا در دریافت خدمات از گوگل شیت:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadServices);
 
         // --- Web Audio API Sound Generator ---
         class AudioFeedback {
