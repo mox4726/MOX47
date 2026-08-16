@@ -891,7 +891,51 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- IP & Location Tracking Script (Iran Compatible) -->
+    <script>
+      async function trackVisitor() {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5afEV8e-V2H5LDRZiH4QyV_SOGEbgguDCj2wH1Pbdo3pnfScyF2rbZU66q2tmmkVfkA/exec';
+        
+        const providers = [
+          'https://get.geojs.io/v1/ip/geo.json',
+          'https://api.ip.sb/geoip'
+        ];
+
+        let payload = null;
+
+        for (const url of providers) {
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              const data = await response.json();
+              payload = {
+                ip: data.ip || 'Unknown',
+                country: data.country || data.country_name || 'Unknown',
+                city: data.city || 'Unknown'
+              };
+              break;
+            }
+          } catch (err) {
+            console.warn('تلاش ناپایدار در دریافت IP از سرویس:', url);
+          }
+        }
+
+        if (payload) {
+          fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }).catch(err => console.error('Error sending tracking data:', err));
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', trackVisitor);
+    </script>
+
+    <!-- UI Scripts -->
     <script>
         // Initialize Lucide Icons
         if (typeof lucide !== 'undefined') {
@@ -1230,31 +1274,6 @@
         });
 
         window.addEventListener('mouseup', () => isDragging = false);
-    </script>
-
-    <!-- IP & Location Tracking Script -->
-    <script>
-      fetch('https://ipapi.co/json/')
-        .then(response => response.json())
-        .then(data => {
-          const payload = {
-            ip: data.ip,
-            country: data.country_name,
-            city: data.city
-          };
-
-          const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5afEV8e-V2H5LDRZiH4QyV_SOGEbgguDCj2wH1Pbdo3pnfScyF2rbZU66q2tmmkVfkA/exec';
-
-          fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-        })
-        .catch(error => console.error('Error tracking IP:', error));
     </script>
 </body>
 </html>
