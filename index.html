@@ -51,7 +51,7 @@
             line-height: 1.6;
         }
 
-        /* --- Maintenance Overlay (صفحه غیرفعال‌سازی فارسی) --- */
+        /* --- Maintenance Overlay --- */
         #maintenance-overlay {
             position: fixed;
             inset: 0;
@@ -665,6 +665,23 @@
             margin-bottom: 28px;
         }
 
+        /* --- Location Section --- */
+        .map-frame {
+            width: 100%;
+            height: 180px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .map-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: grayscale(80%) invert(90%) contrast(120%);
+        }
+
         /* --- Footer --- */
         footer {
             padding: 40px 0 100px;
@@ -720,7 +737,7 @@
 </head>
 <body>
 
-    <!-- Maintenance / Offline Overlay (لایه فارسی غیرفعال‌سازی) -->
+    <!-- Maintenance / Offline Overlay -->
     <div id="maintenance-overlay">
         <h1>مجموعه موقتاً تعطیل است</h1>
         <p>در حال حاضر نوبت‌دهی و فعالیت مجموعه متوقف شده است. لطفاً ساعات دیگری مراجعه فرمایید.</p>
@@ -748,7 +765,7 @@
             </nav>
 
             <div class="hero-content" style="text-align: right; margin-top: -120px;">
-                <img src="IMG-20260815-WA0000.jpg" alt="Logo" style="width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto 20px auto; border-radius: 10px;">
+                <img src="IMG-20260815-WA0000.webp" alt="Logo" style="width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto 20px auto; border-radius: 10px;">
                 <div class="hero-tag">مسیح منتظری</div>
                 <h1 class="hero-title">دقت در جزئیات،<br><span class="gold-text">امضای استایل شماست.</span></h1>
     
@@ -783,7 +800,7 @@
         <section id="about" style="padding: 20px 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
             <div class="glass-card about-card" style="width: 100%; border-radius: 0; margin: 0;">
                 <div class="master-profile">
-                    <img src="IMG-20260815-WA0007.jpg" alt="مسیح منتظری" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="IMG-20260815-WA0007.webp" alt="مسیح منتظری" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 
                 <h3 class="master-name">مسیح منتظری</h3>
@@ -809,11 +826,11 @@
             </div>
 
             <div class="ba-container" id="ba-slider">
-                <img src="IMG_20260816_160929.jpg" alt="Before" class="ba-image">
+                <img src="IMG_20260816_160929.webp" alt="Before" class="ba-image">
                 <span class="ba-label ba-label-before">قبل</span>
 
                 <div class="ba-after" id="ba-after-layer">
-                    <img src="IMG_20260816_160902.jpg" alt="After" id="ba-after-img">
+                    <img src="IMG_20260816_160902.webp" alt="After" id="ba-after-img">
                     <span class="ba-label ba-label-after">بعد</span>
                 </div>
 
@@ -834,13 +851,13 @@
 
             <div class="lookbook-grid">
                 <div class="lookbook-item tall">
-                    <img src="photo-1517832606299-7ae9b720a186.jpeg" alt="Style 1">
+                    <img src="photo-1517832606299-7ae9b720a186.webp" alt="Style 1">
                 </div>
                 <div class="lookbook-item">
-                    <img src="photo-1605497788044-5a32c7078486.jpeg" alt="Style 2">
+                    <img src="photo-1605497788044-5a32c7078486.webp" alt="Style 2">
                 </div>
                 <div class="lookbook-item">
-                    <img src="IMG-20260815-WA0002.jpg" alt="Style 3">
+                    <img src="IMG-20260815-WA0002.webp" alt="Style 3">
                 </div>
             </div>
         </section>
@@ -870,8 +887,30 @@
             </div>
         </section>
 
+        <!-- Location Section -->
+        <section id="location" style="padding-bottom: 40px;">
+            <div class="glass-card info-card" style="flex-direction: column; align-items: stretch; padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div class="info-icon">
+                        <i data-lucide="map-pin"></i>
+                    </div>
+                    <div class="info-details">
+                        <h4>موقعیت مکانی استودیو</h4>
+                        <p>نجف‌آباد، خیابان اصلی استودیو MOX</p>
+                    </div>
+                </div>
+                <div class="map-frame">
+                    <iframe src="https://maps.google.com/maps?q=32.6341,51.3688&z=16&output=embed" loading="lazy" allowfullscreen></iframe>
+                </div>
+                <a href="https://maps.app.goo.gl/s4AVVKRpFak7thdi8" target="_blank" rel="noopener" class="btn-primary" style="margin-top: 16px; padding: 14px;">
+                    <i data-lucide="navigation"></i>
+                    <span>مسیریابی در گوگل مپ</span>
+                </a>
+            </div>
+        </section>
+
         <!-- Final Booking Section -->
-        <section id="booking" class="section-padding">
+        <section id="booking" class="section-padding" style="padding-top: 0;">
             <div class="glass-card booking-card">
                 <h2 class="booking-title">استایل بعدی شما،<br><span class="gold-text">از اینجا شروع می‌شود.</span></h2>
                 <p class="booking-subtitle">جهت هماهنگی و رزرو نوبت اختصاصی وارد اینستاگرام شوید.</p>
@@ -925,7 +964,7 @@
     <script>
       const sheetURL = 'https://docs.google.com/spreadsheets/d/1AC_RWbfIChySgLGtCMuiVFPvtP0yPB63VVd4-nzWu-k/export?format=csv';
 
-      // --- 1. Check Site Status (با لغو کش برای اعمال آنی) ---
+      // --- 1. Check Site Status ---
       async function checkSiteStatus() {
         const freshURL = sheetURL + '&t=' + new Date().getTime();
         try {
@@ -933,7 +972,6 @@
           const data = await response.text();
           const cleanText = data.toUpperCase();
           
-          // پشتیبانی از هر دو کلمه OFFLINE و غیرفعال
           if (cleanText.includes('OFFLINE') || cleanText.includes('غیرفعال')) {
             document.getElementById('maintenance-overlay').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -946,7 +984,7 @@
         }
       }
 
-      // --- 2. Simple Device Type Detection (بدون مدل گوشی) ---
+      // --- 2. Simple Device Type Detection ---
       function getDeviceType() {
         const ua = navigator.userAgent;
         if (/android/i.test(ua)) return 'Android';
