@@ -26,9 +26,9 @@
         /* پس‌زمینه نوری متحرک */
         .glow {
             position: absolute;
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
             top: 50%;
             left: 50%;
@@ -37,8 +37,8 @@
         }
 
         @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.4; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
         }
 
         /* کارت شیشه‌ای گلاس‌مورفیسم */
@@ -48,7 +48,7 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            padding: 40px 30px;
+            padding: 40px 28px;
             text-align: center;
             max-width: 420px;
             width: 90%;
@@ -75,29 +75,50 @@
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
         }
 
         p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #a0a0a0;
             line-height: 1.6;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            font-size: 0.8rem;
+        /* دکمه ارتباط و پورتفولیو */
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 12px;
             color: #d4af37;
-            letter-spacing: 0.5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .contact-btn:hover {
+            background: linear-gradient(135deg, #d4af37, #b89628);
+            color: #000000;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .contact-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
         }
     </style>
 </head>
@@ -112,8 +133,14 @@
             </svg>
         </div>
         <h1>وب‌سایت در حالت آرشیو است</h1>
-        <p>این وب‌سایت در حال حاضر به‌صورت موقت غیرفعال و در آرشیو قرار گرفته است.</p>
-        <span class="badge">STATUS: ARCHIVED</span>
+        <p>این وب‌سایت به‌صورت موقت غیرفعال شده است.</p>
+
+        <a href="https://abolfazlglow-debug.github.io/Profile/" target="_blank" class="contact-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            سفارش طراحی سایت و ارتباط با طراح
+        </a>
     </div>
 
 </body>
